@@ -1,0 +1,55 @@
+---
+- name: Update packages
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Install Podman
+  ansible.builtin.apt:
+    name: podman
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Login to ACR in Podman
+  containers.podman.podman_login:
+    registry: "{{ acr_login_server }}"
+    username: "{{ acr_username }}"
+    password: "{{ acr_password }}"
+  become: yes
+
+- name: Pull image from ACR
+  containers.podman.podman_image:
+    name: "{{ acr_login_server }}/nginx"
+    tag: "casopractico2"
+    pull: yes
+  become: yes
+
+- name: Run Nginx container with Podman
+  containers.podman.podman_container:
+    name: nginx-cp2
+    image: "{{ acr_login_server }}/nginx"
+    tag: "casopractico2"
+    state: started
+    ports:
+      - "80:80"
+    restart_policy: always
+  become: yes
+
+- name: Generate systemd unit file for nginx container
+  become: yes
+  ansible.builtin.shell:
+    cmd: podman generate systemd --name nginx-cp2 --files --restart-policy always
+    chdir: /etc/systemd/system/
+  register: systemd_gen
+  changed_when: systemd_gen.rc == 0
+
+- name: Reload systemd units and enable nginx service
+  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: container-nginx-cp2
+    enabled: yes
+    state: started

@@ -1,0 +1,20 @@
+---
+- name: Setup ACR and images
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - secrets/credentials.yml
+  tasks:
+    - name: Push, build, tag and push image to ACR
+      include_role:
+        name: acr
+
+- name: Setup webserver
+  hosts: webapp
+  gather_facts: false
+  vars_files:
+    - secrets/credentials.yml
+  tasks:
+    - name: Configure VM with podman and deploy nginx container
+      include_role:
+        name: vm

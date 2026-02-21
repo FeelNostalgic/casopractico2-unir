@@ -1,0 +1,23 @@
+---
+- name: Pull Nginx image from Docker Hub
+  community.docker.docker_image:
+    name: nginx:latest
+    source: pull
+
+- name: Tag Nginx image for ACR
+  community.docker.docker_image:
+    name: nginx:latest
+    repository: "{{ acr_login_server }}/nginx:casopractico2"
+    source: local
+
+- name: Login to ACR
+  community.docker.docker_login:
+    registry_url: "{{ acr_login_server }}"
+    username: "{{ acr_username }}"
+    password: "{{ acr_password }}"
+
+- name: Push image to ACR
+  community.docker.docker_image:
+    name: "{{ acr_login_server }}/nginx:casopractico2"
+    push: yes
+    source: local

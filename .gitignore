@@ -43,3 +43,6 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
+
+# Ansible
+ansible/secrets
