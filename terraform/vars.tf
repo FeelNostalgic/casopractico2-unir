@@ -27,3 +27,9 @@ variable "admin_username" {
   description = "Nombre de usuario administrador para la máquina virtual"
   default = "azureuser"
 }
+
+variable "aks_name" {
+  type        = string
+  description = "Nombre del cluster AKS"
+  default     = "aks-cp2"
+}

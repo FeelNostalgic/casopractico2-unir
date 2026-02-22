@@ -25,3 +25,9 @@ output "acr_password" {
   sensitive   = true
   description = "Contraseña del administrador del ACR"
 }
+
+output "aks_kube_config" {
+  value     = azurerm_kubernetes_cluster.aks.kube_config_raw
+  sensitive = true
+  description = "Credenciales del cluster AKS"
+}
