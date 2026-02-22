@@ -1,6 +1,6 @@
----
 - name: Setup ACR and images
   hosts: localhost
+  tags: acr
   gather_facts: false
   vars_files:
     - secrets/credentials.yml
@@ -11,6 +11,7 @@
 
 - name: Setup webserver
   hosts: webapp
+  tags: vm
   gather_facts: false
   vars_files:
     - secrets/credentials.yml
@@ -18,3 +19,14 @@
     - name: Configure VM with podman and deploy nginx container
       include_role:
         name: vm
+
+- name: Setup AKS deployment
+  hosts: localhost
+  tags: aks
+  gather_facts: false
+  vars_files:
+    - secrets/credentials.yml
+  tasks:
+    - name: Deploy to AKS
+      include_role:
+        name: aks

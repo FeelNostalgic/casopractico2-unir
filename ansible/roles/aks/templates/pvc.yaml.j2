@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ app.backend.pv }}"
+  namespace: "{{ app_namespace }}"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "{{ app.backend.storage }}"
+  storageClassName: managed-csi

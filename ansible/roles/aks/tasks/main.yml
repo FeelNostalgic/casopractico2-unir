@@ -1,0 +1,25 @@
+---
+- name: Get AKS credentials
+  ansible.builtin.command:
+    cmd: az aks get-credentials --resource-group rg-cp2 --name aks-cp2 --overwrite-existing
+  changed_when: false
+
+- name: Create namespace
+  kubernetes.core.k8s:
+    name: "{{ app_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Create Persistent Volume Claim
+  kubernetes.core.k8s:
+    state: present
+    namespace: "{{ app_namespace }}"
+    template: pvc.yaml.j2
+
+- name: Deploy app from template
+  kubernetes.core.k8s:
+    state: present
+    force: yes
+    namespace: "{{ app_namespace }}"
+    template: app_deployment.yaml.j2

@@ -1,0 +1,95 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ app.backend.name }}"
+  namespace: "{{ app_namespace }}"
+  labels:
+    app: "{{ app.backend.name }}"
+spec:
+  replicas: {{ app.backend.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: "{{ app.backend.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ app.backend.name }}"
+    spec:
+      containers:
+        - name: "{{ app.backend.name }}"
+          image: "{{ acr_login_server }}/{{ app.backend.repo }}:{{ app.backend.tag }}"
+          args: ["--appendonly", "yes"]
+          ports:
+            - containerPort: {{ app.backend.port }}
+          env:
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: "{{ app.backend.pv }}"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ app.backend.name }}"
+  namespace: "{{ app_namespace }}"
+spec:
+  ports:
+    - port: {{ app.backend.port }}
+  selector:
+    app: "{{ app.backend.name }}"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ app.frontend.name }}"
+  namespace: "{{ app_namespace }}"
+spec:
+  replicas: {{ app.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ app.frontend.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ app.frontend.name }}"
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: "{{ app.frontend.name }}"
+          image: "{{ acr_login_server }}/{{ app.frontend.repo }}:{{ app.frontend.tag }}"
+          resources:
+            requests:
+              memory: "{{ app.frontend.requests.memory }}"
+              cpu: "{{ app.frontend.requests.cpu }}"
+            limits:
+              memory: "{{ app.frontend.limits.memory }}"
+              cpu: "{{ app.frontend.limits.cpu }}"
+          ports:
+            - containerPort: {{ app.frontend.port }}
+          env:
+            - name: REDIS
+              value: "{{ app.backend.name }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ app.frontend.name }}"
+  namespace: "{{ app_namespace }}"
+spec:
+  type: LoadBalancer
+  ports:
+    - port: {{ app.frontend.port }}
+      targetPort: {{ app.frontend.port }}
+  selector:
+    app: "{{ app.frontend.name }}"

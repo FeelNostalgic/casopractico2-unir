@@ -1,0 +1,32 @@
+# vars file for aks
+app_namespace: cp2-unir
+
+app:
+  backend:
+    name: backend
+    replicas: 1
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    port: 6379
+    pv: redis-data
+    storage: 1Gi
+    repo: redis
+    tag: casopractico2
+
+  frontend:
+    name: frontend
+    replicas: 1
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    port: 80
+    pv: azure-vote-data
+    repo: azure-vote-front
+    tag: casopractico2
