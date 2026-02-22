@@ -1,0 +1,17 @@
+---
+- name: "Pull {{ image_item.name }} from source"
+  containers.podman.podman_image:
+    name: "{{ image_item.source }}"
+    state: present
+
+- name: "Tag {{ image_item.name }} for ACR"
+  containers.podman.podman_tag:
+    image: "{{ image_item.source }}"
+    target_names:
+      - "{{ acr_login_server }}/{{ image_item.repo }}:{{ image_item.tag }}"
+
+- name: "Push {{ image_item.name }} to ACR"
+  containers.podman.podman_image:
+    name: "{{ acr_login_server }}/{{ image_item.repo }}"
+    tag: "{{ image_item.tag }}"
+    push: yes

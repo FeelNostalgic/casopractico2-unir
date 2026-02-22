@@ -1,0 +1,16 @@
+---
+acr_images:
+  - name: "nginx"
+    source: "docker.io/library/nginx:latest"
+    repo: "nginx"
+    tag: "casopractico2"
+
+  - name: "redis"
+    source: "docker.io/redis:6.0.8"
+    repo: "redis"
+    tag: "casopractico2"
+    
+  - name: "azure-vote-front"
+    source: "docker.io/suhuruli/azure-vote-front:latest"
+    repo: "azure-vote-front"
+    tag: "casopractico2"

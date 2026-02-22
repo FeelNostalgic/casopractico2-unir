@@ -46,3 +46,4 @@ Thumbs.db
 
 # Ansible
 ansible/secrets
+ansible/inventory.ini

@@ -30,8 +30,7 @@
 - name: Run Nginx container with Podman
   containers.podman.podman_container:
     name: nginx-cp2
-    image: "{{ acr_login_server }}/nginx"
-    tag: "casopractico2"
+    image: "{{ acr_login_server }}/nginx:casopractico2"
     state: started
     ports:
       - "80:80"
