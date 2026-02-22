@@ -5,7 +5,7 @@
   vars_files:
     - secrets/credentials.yml
   tasks:
-    - name: Push, build, tag and push image to ACR
+    - name: Pull, tag and push image to ACR
       include_role:
         name: acr
 
