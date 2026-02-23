@@ -18,15 +18,25 @@ spec:
       labels:
         app: "{{ app.backend.name }}"
     spec:
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
         - name: "{{ app.backend.name }}"
           image: "{{ acr_login_server }}/{{ app.backend.repo }}:{{ app.backend.tag }}"
+          resources:
+            requests:
+              memory: "{{ app.backend.requests.memory }}"
+              cpu: "{{ app.backend.requests.cpu }}"
+            limits:
+              memory: "{{ app.backend.limits.memory }}"
+              cpu: "{{ app.backend.limits.cpu }}"
           args: ["--appendonly", "yes"]
           ports:
             - containerPort: {{ app.backend.port }}
           env:
             - name: ALLOW_EMPTY_PASSWORD
               value: "yes"
+          
           volumeMounts:
             - name: redis-storage
               mountPath: /data
